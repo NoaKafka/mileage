@@ -1,4 +1,4 @@
-package com.triple.mileage.data.Entity;
+package com.triple.mileage.event.data.entity;
 
 import lombok.*;
 import org.hibernate.annotations.OnDelete;

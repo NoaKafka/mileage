@@ -1,6 +1,6 @@
-package com.triple.mileage.Repository;
+package com.triple.mileage.user.Repository;
 
-import com.triple.mileage.data.Entity.User;
+import com.triple.mileage.user.data.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

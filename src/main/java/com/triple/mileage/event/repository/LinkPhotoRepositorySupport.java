@@ -1,19 +1,17 @@
-package com.triple.mileage.Repository;
+package com.triple.mileage.event.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.triple.mileage.data.Entity.LinkPhoto;
-import com.triple.mileage.data.Entity.QLinkPhoto;
-import com.triple.mileage.data.Entity.Review;
+import com.triple.mileage.event.data.entity.LinkPhoto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-import static com.triple.mileage.data.Entity.QLinkPhoto.linkPhoto;
-import static com.triple.mileage.data.Entity.QReview.review;
+import static com.triple.mileage.event.data.entity.QLinkPhoto.linkPhoto;
+import static com.triple.mileage.event.data.entity.QReview.review;
+
 
 @Repository
 public class LinkPhotoRepositorySupport extends QuerydslRepositorySupport {
@@ -24,12 +22,10 @@ public class LinkPhotoRepositorySupport extends QuerydslRepositorySupport {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    public Set<LinkPhoto> findByReviewId(String reviewId){
-        List<LinkPhoto> result = jpaQueryFactory.selectFrom(linkPhoto)
+    public List<LinkPhoto> findByReviewId(String reviewId){
+        return jpaQueryFactory.selectFrom(linkPhoto)
                 .where(linkPhoto.review.reviewId.eq(review.reviewId))
                 .fetch();
-
-        return new HashSet<>(result);
     }
 
 }

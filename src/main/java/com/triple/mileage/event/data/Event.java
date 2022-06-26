@@ -1,4 +1,4 @@
-package com.triple.mileage.data;
+package com.triple.mileage.event.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

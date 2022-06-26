@@ -1,13 +1,14 @@
-package com.triple.mileage.Repository;
+package com.triple.mileage.event.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.triple.mileage.data.Entity.Review;
+import com.triple.mileage.event.data.entity.Review;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.triple.mileage.data.Entity.QReview.*;
+import static com.triple.mileage.event.data.entity.QReview.review;
+
 
 @Repository
 public class ReviewRepositorySupport extends QuerydslRepositorySupport {
@@ -24,6 +25,21 @@ public class ReviewRepositorySupport extends QuerydslRepositorySupport {
         return jpaQueryFactory.selectFrom(review)
                 .where(review.reviewId.eq(reviewId))
                 .fetch();
+    }
+
+    public Long findByPlaceId(String placeId){
+        return jpaQueryFactory.selectFrom(review)
+                .where(review.placeId.eq(placeId))
+                .fetch()
+                .stream().count();
+    };
+
+    public boolean containUserReview(String placdeId,  String userId) {
+        return (jpaQueryFactory.selectFrom(review)
+                .where(review.placeId.eq(placdeId))
+                .where(review.userId.eq(userId))
+                .fetch()
+                .stream().count() ) > 0L;
     }
 
 /*

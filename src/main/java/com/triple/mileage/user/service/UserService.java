@@ -1,7 +1,7 @@
-package com.triple.mileage.service;
+package com.triple.mileage.user.service;
 
-import com.triple.mileage.Repository.UserRepository;
-import com.triple.mileage.data.Entity.User;
+import com.triple.mileage.user.Repository.UserRepository;
+import com.triple.mileage.user.data.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,7 +16,11 @@ public class UserService {
     }
 
     public User findByUserId(String userId){
-        return userRepository.findByUserId(userId)
-                .orElseThrow(IllegalArgumentException::new);
+        Optional<User> dbUser =  userRepository.findByUserId(userId);
+
+        if(dbUser.isPresent()){
+            return dbUser.get();
+        }
+        return null;
     }
 }

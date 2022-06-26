@@ -1,8 +1,7 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.data.Entity.Review;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import com.triple.mileage.event.data.entity.Review;
+import com.triple.mileage.event.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

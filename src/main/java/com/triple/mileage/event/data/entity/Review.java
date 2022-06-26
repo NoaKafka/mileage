@@ -1,10 +1,9 @@
-package com.triple.mileage.data.Entity;
+package com.triple.mileage.event.data.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
@@ -25,7 +24,10 @@ public class Review {
     @Column
     private String content;
 
-    @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private Set<LinkPhoto> linkPhotos;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LinkPhoto> linkPhotos;
+
+    @Column
+    private Boolean isFirstAtPlace;
 
 }

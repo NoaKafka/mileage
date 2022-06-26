@@ -1,8 +1,11 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.data.Entity.LinkPhoto;
-import com.triple.mileage.data.Entity.Review;
-import com.triple.mileage.data.Event;
+import com.triple.mileage.event.data.entity.LinkPhoto;
+import com.triple.mileage.event.data.entity.Review;
+import com.triple.mileage.event.data.Event;
+import com.triple.mileage.event.repository.LinkPhotoRepository;
+import com.triple.mileage.event.repository.ReviewRepository;
+import com.triple.mileage.event.repository.ReviewRepositorySupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class QueryRepositoryTest {
 
-    @Autowired ReviewRepositorySupport reviewRepositorySupport;
-    @Autowired ReviewRepository reviewRepository;
+    @Autowired
+    ReviewRepositorySupport reviewRepositorySupport;
+    @Autowired
+    ReviewRepository reviewRepository;
     @Autowired
     LinkPhotoRepository linkPhotoRepository;
 

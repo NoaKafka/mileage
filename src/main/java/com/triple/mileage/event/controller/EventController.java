@@ -1,12 +1,10 @@
-package com.triple.mileage;
+package com.triple.mileage.event.controller;
 
-import com.triple.mileage.data.Entity.Review;
-import com.triple.mileage.data.Event;
-import com.triple.mileage.service.ReviewService;
+import com.triple.mileage.event.data.entity.Review;
+import com.triple.mileage.event.data.Event;
+import com.triple.mileage.event.service.ReviewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +35,7 @@ public class EventController {
         }
         else if(action.equals("DELETE")){
             // Delete Review
-            reviewService.deleteReview(event.getReviewId());
+            reviewService.deleteReview(event.getReviewId(), event.getUserId());
         }
         return "";
     }
