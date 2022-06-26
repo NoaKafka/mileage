@@ -6,20 +6,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SpringBootTest
 class ReviewRepositoryTest {
+
+    @Test
+    void findByReviewId() {
+    }
 
     @Autowired
     private ReviewRepository reviewRepository;
 
     @Test
     @DisplayName("새 Review 저장")
-    public void addNewMember(){
+    public void addNewReview(){
         //given
         Review review = Review.builder()
-                .reviewId("id-1234")
+                .reviewId("id-1237")
                 .content("좋아요!")
                 .userId("noakafka")
                 .placeId("seoul")
@@ -32,9 +38,5 @@ class ReviewRepositoryTest {
         assertThat(dbReview.getContent()).isEqualTo(review.getContent());
         assertThat(dbReview.getUserId()).isEqualTo(review.getUserId());
 
-    }
-
-    @Test
-    void findByReviewId() {
     }
 }

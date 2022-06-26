@@ -1,49 +1,119 @@
 package com.triple.mileage.service;
 
+import com.triple.mileage.Repository.LinkPhotoRepository;
+import com.triple.mileage.Repository.LinkPhotoRepositorySupport;
 import com.triple.mileage.Repository.ReviewRepository;
+import com.triple.mileage.data.Entity.LinkPhoto;
 import com.triple.mileage.data.Entity.Review;
 import com.triple.mileage.data.Event;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class ReviewServiceTest {
 
+    @Autowired ReviewRepository reviewRepository;
+    @Autowired LinkPhotoRepository linkPhotoRepository;
+    @Autowired LinkPhotoRepositorySupport linkPhotoRepositorySupport;
+    @Autowired ReviewService reviewService;
 
-    @Autowired
-    private ReviewRepository reviewRepository;
-    private final ReviewService reviewService = new ReviewService(reviewRepository);
 
     @Test
+    @DisplayName("추가")
     void addReview() {
         //given
-        List<String> array = new ArrayList<>(Arrays.asList("e4d1a64e-a531-46de-88d0-ff0ed70c0bb8", "afb0cef2- 851d-4a50-bb07-9cc15cbdc332"));
+        List<String> array = new ArrayList<>(Arrays.asList("11", "22", "33"));
 
         Event event = Event.builder()
                 .type("REVIEW")
                 .action("ADD")
-                .reviewId("240a0658-dc5f-4878-9381-ebb7b2667772")
+                .reviewId("review2")
                 .content("좋아요!")
                 .attachedPhotoIds(array)
                 .userId("noakafka")
                 .placeId("충정로")
                 .build();
         //when
-        String result = reviewService.addReview(event);
-        //then
-        Assertions.assertThat(result).isEqualTo("add test");
+        //save Review
+        Review dbReview = reviewRepository.save(Review.builder()
+                .reviewId(event.getReviewId())
+                .content(event.getContent())
+                .userId(event.getUserId())
+                .placeId(event.getPlaceId())
+                .build()
+        );
+        for (String photoId : event.getAttachedPhotoIds()) {
+            // save link
+            linkPhotoRepository.save(LinkPhoto.builder()
+                    .photoId(photoId)
+                    .review(dbReview)
+                    .build()
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("수정")
+    void modifyReview() {
+        // given
+        Review reqReview = Review.builder()
+                .reviewId("review2")
+                .content("hi")
+                .userId("noakafka")
+                .placeId("충정로")
+                .build();
+        // when
+        Review dbReview = reviewRepository.findByReviewId(reqReview.getReviewId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        Set<String> photosToMod = new HashSet<>();
+        photosToMod.add("cascade2");photosToMod.add("11");
+
+        Set<LinkPhoto> dbLinks = linkPhotoRepositorySupport.findByReviewId(dbReview.getReviewId());
+
+        for(Iterator<LinkPhoto> itr = dbLinks.iterator(); itr.hasNext();){
+            LinkPhoto dbPhoto = itr.next();
+            if(photosToMod.contains(dbPhoto.getPhotoId()) == false){
+                itr.remove();
+            }
+        }
+        // 새롭게 들어온 photo - > 변경할 photoSet
+        for (String photo : photosToMod) {
+            dbLinks.add(LinkPhoto.builder().photoId(photo).review(reqReview).build());
+        }
+
+        //변경감지
+        dbReview.setContent(reqReview.getContent());
+        dbReview.setLinkPhotos(dbLinks);
+        Review changedReview = reviewRepository.save(dbReview);
+
+        // then
+        //assertThat(dbReview.getLinkPhotos().size()).isEqualTo(photosToMod.size());
+        assertThat(changedReview.getContent()).isEqualTo(reqReview.getContent());
+    }
+
+    @Test
+    @DisplayName("삭제")
+    void deleteReview(){
+
+        // given
+        Review reqReview = Review.builder()
+                .reviewId("review2")
+                .content("hi")
+                .userId("noakafka")
+                .placeId("충정로")
+                .build();
+
+        // when
+        Optional<Review> dbReview = reviewRepository.findByReviewId(reqReview.getReviewId());
+        dbReview.ifPresent(selectedReview -> {
+            reviewRepository.delete(selectedReview);
+        });
     }
 }

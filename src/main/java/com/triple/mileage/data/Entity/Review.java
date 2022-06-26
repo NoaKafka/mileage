@@ -1,20 +1,19 @@
 package com.triple.mileage.data.Entity;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
 @Builder
-@Table(name = "Review")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
     @Id
-    @Column(nullable = false)
+    @Column(name = "REVIEW_ID")
     private String reviewId;
 
     @Column(nullable = false)
@@ -25,4 +24,8 @@ public class Review {
 
     @Column
     private String content;
+
+    @OneToMany(mappedBy = "review", orphanRemoval = true)
+    private Set<LinkPhoto> linkPhotos;
+
 }
