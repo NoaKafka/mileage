@@ -1,8 +1,8 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.event.data.entity.LinkPhoto;
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.repository.LinkPhotoRepository;
+import com.triple.mileage.domain.LinkPhoto;
+import com.triple.mileage.domain.Review;
+import com.triple.mileage.repository.LinkPhotoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

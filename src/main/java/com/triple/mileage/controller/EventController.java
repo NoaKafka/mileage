@@ -1,8 +1,8 @@
-package com.triple.mileage.event.controller;
+package com.triple.mileage.controller;
 
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.data.Event;
-import com.triple.mileage.event.service.ReviewService;
+import com.triple.mileage.domain.Review;
+import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.service.ReviewService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,19 +23,19 @@ public class EventController {
     }
 
     @PostMapping
-    public String handleEvents(@RequestBody Event event){
+    public String handleEvents(@RequestBody EventDTO eventDTO){
 
-        String action = event.getAction();
+        String action = eventDTO.getAction();
         if(action.equals("ADD")){
-            Review review = reviewService.addReview(event);
+            Review review = reviewService.addReview(eventDTO);
         }
         else if(action.equals("MOD")){
             //Review Update
-            Review review = reviewService.modifyReview(event);
+            Review review = reviewService.modifyReview(eventDTO);
         }
         else if(action.equals("DELETE")){
             // Delete Review
-            reviewService.deleteReview(event.getReviewId(), event.getUserId());
+            reviewService.deleteReview(eventDTO.getReviewId(), eventDTO.getUserId());
         }
         return "";
     }

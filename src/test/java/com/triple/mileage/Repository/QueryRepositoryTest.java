@@ -1,11 +1,11 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.event.data.entity.LinkPhoto;
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.data.Event;
-import com.triple.mileage.event.repository.LinkPhotoRepository;
-import com.triple.mileage.event.repository.ReviewRepository;
-import com.triple.mileage.event.repository.ReviewRepositorySupport;
+import com.triple.mileage.domain.LinkPhoto;
+import com.triple.mileage.domain.Review;
+import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.repository.LinkPhotoRepository;
+import com.triple.mileage.repository.ReviewRepository;
+import com.triple.mileage.repository.ReviewRepositorySupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ class QueryRepositoryTest {
         //given
         List<String> array = new ArrayList<>(Arrays.asList("e4d1a64e-a531-46de-88d0-ff0ed70c0bb8", "afb0cef2- 851d-4a50-bb07-9cc15cbdc332"));
 
-        Event event = Event.builder()
+        EventDTO eventDTO = EventDTO.builder()
                 .type("REVIEW")
                 .action("ADD")
                 .reviewId("240a0658-dc5f-4878-9381-ebb7b2667772")
@@ -45,13 +45,13 @@ class QueryRepositoryTest {
         //when
         //save Review
         Review dbReview = reviewRepository.save(Review.builder()
-                .reviewId(event.getReviewId())
-                .content(event.getContent())
-                .userId(event.getUserId())
-                .placeId(event.getPlaceId())
+                .reviewId(eventDTO.getReviewId())
+                .content(eventDTO.getContent())
+                .userId(eventDTO.getUserId())
+                .placeId(eventDTO.getPlaceId())
                 .build()
         );
-        for (String photoId : event.getAttachedPhotoIds()) {
+        for (String photoId : eventDTO.getAttachedPhotoIds()) {
             // save link
             linkPhotoRepository.save(LinkPhoto.builder()
                     .photoId(photoId)

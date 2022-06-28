@@ -1,4 +1,4 @@
-package com.triple.mileage.event.data.entity;
+package com.triple.mileage.domain;
 
 import lombok.*;
 
@@ -10,6 +10,7 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = @Index(name = "reviewIdx", columnList = "placeId, userId"))
 public class Review {
     @Id
     @Column(name = "REVIEW_ID")

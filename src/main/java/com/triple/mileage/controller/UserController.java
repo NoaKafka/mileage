@@ -1,7 +1,7 @@
-package com.triple.mileage.user.controller;
+package com.triple.mileage.controller;
 
-import com.triple.mileage.user.data.entity.User;
-import com.triple.mileage.user.service.UserService;
+import com.triple.mileage.domain.User;
+import com.triple.mileage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 

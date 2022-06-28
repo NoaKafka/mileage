@@ -1,7 +1,7 @@
 package com.triple.mileage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.triple.mileage.event.data.Event;
+import com.triple.mileage.repository.query.EventDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @WebMvcTest // MVC와 관련된 클래스들만 로딩, MVC (단위)테스트 하기위해
 @AutoConfigureMockMvc   // 자동으로 MockMvc 설정
-public class EventControllerTest {
+public class EventDTOControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,7 +35,7 @@ public class EventControllerTest {
         // body에 json 형식으로 회원의 데이터를 넣기 위해서 Map을 이용한다.
         List<String> array = new ArrayList<>(Arrays.asList("e4d1a64e-a531-46de-88d0-ff0ed70c0bb8", "afb0cef2- 851d-4a50-bb07-9cc15cbdc332"));
 
-        Event event = Event.builder()
+        EventDTO eventDTO = EventDTO.builder()
                 .type("REVIEW")
                 .action("ADD")
                 .reviewId("240a0658-dc5f-4878-9381-ebb7b2667772")
@@ -47,9 +47,9 @@ public class EventControllerTest {
 
         mockMvc.perform(post("/events")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(event)))
+                .content(objectMapper.writeValueAsString(eventDTO)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(event.toString()))
+                .andExpect(content().string(eventDTO.toString()))
                 .andDo(print());
 
 

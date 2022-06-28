@@ -1,4 +1,4 @@
-package com.triple.mileage.event.data.entity;
+package com.triple.mileage.domain;
 
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -20,7 +20,6 @@ public class LinkPhoto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "REVIEW_ID")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Review review;
 
     @Column

@@ -1,6 +1,6 @@
-package com.triple.mileage.event.repository;
+package com.triple.mileage.repository;
 
-import com.triple.mileage.event.data.entity.LinkPhoto;
+import com.triple.mileage.domain.LinkPhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

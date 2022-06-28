@@ -1,7 +1,7 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.user.data.entity.User;
-import com.triple.mileage.user.Repository.UserRepository;
+import com.triple.mileage.domain.User;
+import com.triple.mileage.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ class UserRepositoryTest {
 
         // given
         User user = User.builder()
-                .userId("noakafka")
+                .userId("sakarina")
                 .point(0L)
                 .build();
 

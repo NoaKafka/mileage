@@ -1,7 +1,6 @@
-package com.triple.mileage.point.data;
+package com.triple.mileage.domain;
 
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.user.data.entity.User;
+import com.triple.mileage.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +15,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "PointLog")
+@Table(indexes = @Index(name = "pointLogIdx", columnList = "USER_ID"))
 public class PointLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

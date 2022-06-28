@@ -1,7 +1,5 @@
-package com.triple.mileage.user.data.entity;
+package com.triple.mileage.domain;
 
-import com.triple.mileage.event.data.entity.LinkPhoto;
-import com.triple.mileage.point.data.PointLog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

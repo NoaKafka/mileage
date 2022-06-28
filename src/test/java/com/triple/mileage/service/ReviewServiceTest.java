@@ -1,16 +1,15 @@
 package com.triple.mileage.service;
 
-import com.triple.mileage.event.repository.LinkPhotoRepositorySupport;
-import com.triple.mileage.event.repository.ReviewRepository;
-import com.triple.mileage.event.data.entity.LinkPhoto;
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.data.Event;
-import com.triple.mileage.event.repository.ReviewRepositorySupport;
-import com.triple.mileage.event.service.ReviewService;
-import com.triple.mileage.point.data.PointLog;
-import com.triple.mileage.point.repository.PointLogRepository;
-import com.triple.mileage.user.Repository.UserRepository;
-import com.triple.mileage.user.data.entity.User;
+import com.triple.mileage.repository.LinkPhotoRepositorySupport;
+import com.triple.mileage.repository.ReviewRepository;
+import com.triple.mileage.domain.LinkPhoto;
+import com.triple.mileage.domain.Review;
+import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.repository.ReviewRepositorySupport;
+import com.triple.mileage.domain.PointLog;
+import com.triple.mileage.repository.PointLogRepository;
+import com.triple.mileage.repository.UserRepository;
+import com.triple.mileage.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ class ReviewServiceTest {
     @Autowired PointLogRepository pointLogRepository;
 
     @Test
+    @Transactional
     @DisplayName("추가")
     void addReviewWithPoint() {
         //given
@@ -38,7 +38,7 @@ class ReviewServiceTest {
 
         User beforeUser = User.builder().userId("noakafka").point(0L).build();
         userRepository.save(beforeUser);
-        Event event = Event.builder()
+        EventDTO eventDTO = EventDTO.builder()
                 .type("REVIEW")
                 .action("ADD")
                 .reviewId("review2")
@@ -49,43 +49,43 @@ class ReviewServiceTest {
                 .build();
 
         /** 1. Find User */
-        User user = userRepository.findByUserId(event.getUserId())
+        User user = userRepository.findByUserId(eventDTO.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
 
         // 2. make review Object
         Review review = Review.builder()
-                .reviewId(event.getReviewId())
-                .content(event.getContent())
-                .userId(event.getUserId())
-                .placeId(event.getPlaceId())
+                .reviewId(eventDTO.getReviewId())
+                .content(eventDTO.getContent())
+                .userId(eventDTO.getUserId())
+                .placeId(eventDTO.getPlaceId())
                 .isFirstAtPlace(false)
                 .build();
 
         Long changeAmount = 0L;
         // 3. calculate Point 1
         // 3-1. select by placeId
-        if(reviewRepositorySupport.findByPlaceId(event.getPlaceId()) == 0){
+        if(reviewRepositorySupport.findByPlaceId(eventDTO.getPlaceId()) == 0){
             review.setIsFirstAtPlace(true);
             changeAmount += 1L;
         }
         else{
             // 3-2 select by placeId, userId
-            if(reviewRepositorySupport.containUserReview(event.getPlaceId(), event.getUserId())){
+            if(reviewRepositorySupport.containUserReview(eventDTO.getPlaceId(), eventDTO.getUserId())){
                return;
             }
         }
 
         // 4. calculate Point 2
         // 4-1. photo exist
-        if(event.getAttachedPhotoIds().size() != 0) changeAmount += 1L;
+        if(eventDTO.getAttachedPhotoIds().size() != 0) changeAmount += 1L;
         // 4-2. content exist
-        if(event.getContent().length() != 0) changeAmount += 1L;
+        if(eventDTO.getContent().length() != 0) changeAmount += 1L;
 
         // 5. save Review
 
         //when
         List<LinkPhoto> linkPhotos = new ArrayList<>();
-        for (String photoId : event.getAttachedPhotoIds()) {
+        for (String photoId : eventDTO.getAttachedPhotoIds()) {
             // save link
             linkPhotos.add(LinkPhoto.builder()
                     .photoId(photoId)
@@ -104,6 +104,7 @@ class ReviewServiceTest {
                 .amount(changeAmount)
                 .action("ADD")
                 .build();
+
         // 7. add Log to user's logList
         List<PointLog> pointLogs = pointLogRepository.findByUser(user);
 
@@ -124,7 +125,7 @@ class ReviewServiceTest {
         //given
         List<String> array = new ArrayList<>(Arrays.asList("11", "22", "33"));
 
-        Event event = Event.builder()
+        EventDTO eventDTO = EventDTO.builder()
                 .type("REVIEW")
                 .action("ADD")
                 .reviewId("review2")
@@ -134,15 +135,15 @@ class ReviewServiceTest {
                 .placeId("충정로")
                 .build();
         Review review = Review.builder()
-                .reviewId(event.getReviewId())
-                .content(event.getContent())
-                .userId(event.getUserId())
-                .placeId(event.getPlaceId())
+                .reviewId(eventDTO.getReviewId())
+                .content(eventDTO.getContent())
+                .userId(eventDTO.getUserId())
+                .placeId(eventDTO.getPlaceId())
                 .build();
 
         //when
         List<LinkPhoto> linkPhotos = new ArrayList<>();
-        for (String photoId : event.getAttachedPhotoIds()) {
+        for (String photoId : eventDTO.getAttachedPhotoIds()) {
             // save link
             linkPhotos.add(LinkPhoto.builder()
                     .photoId(photoId)

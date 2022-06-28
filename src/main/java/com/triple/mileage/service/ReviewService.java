@@ -1,17 +1,12 @@
-package com.triple.mileage.event.service;
+package com.triple.mileage.service;
 
-import com.triple.mileage.event.repository.ReviewRepository;
-import com.triple.mileage.event.data.entity.LinkPhoto;
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.data.Event;
-import com.triple.mileage.event.repository.ReviewRepositorySupport;
-import com.triple.mileage.point.data.PointLog;
-import com.triple.mileage.point.repository.PointLogRepository;
-import com.triple.mileage.user.Repository.UserRepository;
-import com.triple.mileage.user.data.entity.User;
+import com.triple.mileage.domain.*;
+import com.triple.mileage.repository.*;
+import com.triple.mileage.repository.query.EventDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -22,57 +17,66 @@ public class  ReviewService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewRepositorySupport reviewRepositorySupport;
-    private final PointLogRepository pointLogRepository;
+    private final PlaceRepository placeRepository;
 
     @Autowired
     public ReviewService(UserRepository userRepository,
                          ReviewRepository reviewRepository,
                          ReviewRepositorySupport reviewRepositorySupport,
-                         PointLogRepository pointLogRepository) {
+                         PlaceRepository placeRepository) {
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.reviewRepositorySupport = reviewRepositorySupport;
-        this.pointLogRepository = pointLogRepository;
+        this.placeRepository = placeRepository;
     }
 
-    public Review addReview(Event event) {
+    @Transactional
+    public Review addReview(EventDTO eventDTO) {
 
         // 1. Find User
-        User dbUser = userRepository.findByUserId(event.getUserId())
+        User dbUser = userRepository.findByUserId(eventDTO.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
 
         // 2. make review Object
         Review review = Review.builder()
-                .reviewId(event.getReviewId())
-                .content(event.getContent())
-                .userId(event.getUserId())
-                .placeId(event.getPlaceId())
+                .reviewId(eventDTO.getReviewId())
+                .content(eventDTO.getContent())
+                .userId(eventDTO.getUserId())
+                .placeId(eventDTO.getPlaceId())
                 .isFirstAtPlace(false)
                 .build();
 
         // 3. calculate Point 1
         Long changeAmount = 0L;
-        // 3-1. select by placeId
-        if(reviewRepositorySupport.findByPlaceId(event.getPlaceId()) == 0){
+        /** 이 장소에 내 댓글이 없는가? */
+        // 3-1 select by placeId, userId
+        if(reviewRepositorySupport.containUserReview(eventDTO.getPlaceId(), eventDTO.getUserId())){
+            return null;
+        }
+        /** 이 장소에 댓글 갯수가 0개인가? */
+        // 3-2. select by placeId
+        Place dbPlace = placeRepository.findByPlaceIdForUpdate(eventDTO.getPlaceId())
+                .orElseThrow(IllegalArgumentException::new);
+
+
+        Long cntReview = dbPlace.getReviewCnt();
+        if(cntReview == 0L) {
+            dbUser.setPoint(dbUser.getPoint() + 1L);
             review.setIsFirstAtPlace(true);
-            changeAmount += 1L;
         }
-        else{
-            // 3-2 select by placeId, userId
-            if(reviewRepositorySupport.containUserReview(event.getPlaceId(), event.getUserId())){
-                return null;
-            }
-        }
+        dbPlace.setReviewCnt(cntReview + 1L);
+        /** Lock 해제*/
+        placeRepository.save(dbPlace);
+
         // 4. calculate Point 2
         // 4-1. photo exist
-        if(event.getAttachedPhotoIds().size() != 0) changeAmount += 1L;
+        if(eventDTO.getAttachedPhotoIds().size() != 0) changeAmount += 1L;
         // 4-2. content exist
-        if(event.getContent().length() != 0) changeAmount += 1L;
-
+        if(eventDTO.getContent().length() != 0) changeAmount += 1L;
 
         // 5. save Review
         List<LinkPhoto> linkPhotos = new ArrayList<>();
-        for (String photoId : event.getAttachedPhotoIds()) {
+        for (String photoId : eventDTO.getAttachedPhotoIds()) {
             // save link
             linkPhotos.add(LinkPhoto.builder()
                     .photoId(photoId)
@@ -104,32 +108,33 @@ public class  ReviewService {
 
     /** Review 수정
      *
-     * @param event
+     * @param eventDTO
      * @return Review(Modified)
      */
-    public Review modifyReview(Event event) {
+    @Transactional
+    public Review modifyReview(EventDTO eventDTO) {
 
         // event -> Review
         /** 1. find User*/
-        User user = userRepository.findByUserId(event.getUserId())
+        User user = userRepository.findByUserId(eventDTO.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
 
         /** 2. find Review */
-        Review dbReview = reviewRepository.findByReviewId(event.getReviewId())
+        Review dbReview = reviewRepository.findByReviewId(eventDTO.getReviewId())
                 .orElseThrow(IllegalArgumentException::new);
 
         /** 3. calculate point */
         Long changeAmount = 0L;
-        log.info(event.getContent());
-        if(dbReview.getLinkPhotos().size() > 0L && event.getAttachedPhotoIds().size() == 0L){changeAmount -= 1L;}
-        else if(dbReview.getLinkPhotos().size() == 0L && event.getAttachedPhotoIds().size() > 0L){changeAmount += 1L;}
+        log.info(eventDTO.getContent());
+        if(dbReview.getLinkPhotos().size() > 0L && eventDTO.getAttachedPhotoIds().size() == 0L){changeAmount -= 1L;}
+        else if(dbReview.getLinkPhotos().size() == 0L && eventDTO.getAttachedPhotoIds().size() > 0L){changeAmount += 1L;}
 
-        log.info("db contents : {} | event contents : {}", dbReview.getContent(), event.getContent());
-        if(dbReview.getContent().length() != 0 && event.getContent().length() == 0){changeAmount -= 1L;}
-        else if(dbReview.getContent().length() == 0 && event.getContent().length() != 0){changeAmount += 1L;}
+        log.info("db contents : {} | event contents : {}", dbReview.getContent(), eventDTO.getContent());
+        if(dbReview.getContent().length() != 0 && eventDTO.getContent().length() == 0){changeAmount -= 1L;}
+        else if(dbReview.getContent().length() == 0 && eventDTO.getContent().length() != 0){changeAmount += 1L;}
 
         /** 4. save Review */
-        List<String> photosToMod = new ArrayList<>(event.getAttachedPhotoIds());
+        List<String> photosToMod = new ArrayList<>(eventDTO.getAttachedPhotoIds());
 
         for(Iterator<LinkPhoto> itr = dbReview.getLinkPhotos().iterator(); itr.hasNext();){
             LinkPhoto dbPhoto = itr.next();
@@ -149,7 +154,7 @@ public class  ReviewService {
         }
 
         //변경감지
-        dbReview.setContent(event.getContent());
+        dbReview.setContent(eventDTO.getContent());
         Review savedReview =  reviewRepository.save(dbReview);
 
         /** 5. check Point changed */
@@ -175,38 +180,45 @@ public class  ReviewService {
     }
 
 
+    @Transactional
     public void deleteReview(String reviewId, String userId){
 
         /** 1. find User */
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(IllegalArgumentException::new);
         // when
-        Optional<Review> dbReview = reviewRepository.findByReviewId(reviewId);
+        Review dbReview = reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(IllegalArgumentException::new);
 
-        dbReview.ifPresent(selectedReview -> {
-            /** 3. calculate Point */
-            Long changeAmount = 0L;
-            if(selectedReview.getIsFirstAtPlace()) changeAmount -= 1L;
-            if(selectedReview.getContent().length() > 0L) changeAmount -= 1L;
-            if(selectedReview.getLinkPhotos().size() > 0L) changeAmount -= 1L;
+        /** 2. calculate place's reviewCnt */
+        Place dbPlace = placeRepository.findByPlaceIdForUpdate(dbReview.getPlaceId())
+                .orElseThrow(IllegalArgumentException::new);
 
-            /** 4. make PointLog */
-            PointLog newPointLog = PointLog.builder()
-                    .user(user)
-                    .reviewId(selectedReview.getReviewId())
-                    .amount(changeAmount)
-                    .action("DELETE")
-                    .build();
+        dbPlace.setReviewCnt(dbPlace.getReviewCnt() - 1L);
+        placeRepository.save(dbPlace);
 
-            /** 5.add Log to user's logList */
-            user.getPointLogs().add(newPointLog);
-            user.setPoint(user.getPoint() + changeAmount);
+        /** 3. calculate Point */
+        Long changeAmount = 0L;
+        if(dbReview.getIsFirstAtPlace()) changeAmount -= 1L;
+        if(dbReview.getContent().length() > 0L) changeAmount -= 1L;
+        if(dbReview.getLinkPhotos().size() > 0L) changeAmount -= 1L;
 
-            /** 7. save User */
-            User savedUser = userRepository.save(user);
+        /** 4. make PointLog */
+        PointLog newPointLog = PointLog.builder()
+                .user(user)
+                .reviewId(dbReview.getReviewId())
+                .amount(changeAmount)
+                .action("DELETE")
+                .build();
 
-            /** 8. delete Review*/
-            reviewRepository.delete(selectedReview);
-        });
+        /** 5.add Log to user's logList */
+        user.getPointLogs().add(newPointLog);
+        user.setPoint(user.getPoint() + changeAmount);
+
+        /** 7. save User */
+        User savedUser = userRepository.save(user);
+
+        /** 8. delete Review*/
+        reviewRepository.delete(dbReview);
     }
 }

@@ -1,7 +1,7 @@
-package com.triple.mileage.user.service;
+package com.triple.mileage.service;
 
-import com.triple.mileage.user.Repository.UserRepository;
-import com.triple.mileage.user.data.entity.User;
+import com.triple.mileage.repository.UserRepository;
+import com.triple.mileage.domain.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

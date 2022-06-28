@@ -1,7 +1,7 @@
 package com.triple.mileage.Repository;
 
-import com.triple.mileage.event.data.entity.Review;
-import com.triple.mileage.event.repository.ReviewRepository;
+import com.triple.mileage.domain.Review;
+import com.triple.mileage.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
