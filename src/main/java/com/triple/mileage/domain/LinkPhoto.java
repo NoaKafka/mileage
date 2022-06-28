@@ -22,7 +22,7 @@ public class LinkPhoto {
     @JoinColumn(name = "REVIEW_ID")
     private Review review;
 
-    @Column
+    @Column(nullable = false)
     private String photoId;
 
     @Override

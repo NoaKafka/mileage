@@ -2,6 +2,7 @@ package com.triple.mileage.service;
 
 import com.triple.mileage.repository.UserRepository;
 import com.triple.mileage.domain.User;
+import com.triple.mileage.repository.query.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,11 +16,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User findByUserId(String userId){
-        Optional<User> dbUser =  userRepository.findByUserId(userId);
-
+    public UserDTO findByUserId(UserDTO user){
+        Optional<User> dbUser =  userRepository.findByUserId(user.getUserId());
         if(dbUser.isPresent()){
-            return dbUser.get();
+            return new UserDTO(dbUser.get().getUserId(), dbUser.get().getPoint());
         }
         return null;
     }

@@ -1,15 +1,8 @@
 package com.triple.mileage.service;
 
-import com.triple.mileage.repository.LinkPhotoRepositorySupport;
-import com.triple.mileage.repository.ReviewRepository;
-import com.triple.mileage.domain.LinkPhoto;
-import com.triple.mileage.domain.Review;
+import com.triple.mileage.domain.*;
+import com.triple.mileage.repository.*;
 import com.triple.mileage.repository.query.EventDTO;
-import com.triple.mileage.repository.ReviewRepositorySupport;
-import com.triple.mileage.domain.PointLog;
-import com.triple.mileage.repository.PointLogRepository;
-import com.triple.mileage.repository.UserRepository;
-import com.triple.mileage.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +14,13 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 class ReviewServiceTest {
 
     @Autowired ReviewRepository reviewRepository;
     @Autowired ReviewRepositorySupport reviewRepositorySupport;
     @Autowired UserRepository userRepository;
+    @Autowired PlaceRepository placeRepository;
     @Autowired LinkPhotoRepositorySupport linkPhotoRepositorySupport;
     @Autowired PointLogRepository pointLogRepository;
 
@@ -38,15 +33,13 @@ class ReviewServiceTest {
 
         User beforeUser = User.builder().userId("noakafka").point(0L).build();
         userRepository.save(beforeUser);
-        EventDTO eventDTO = EventDTO.builder()
-                .type("REVIEW")
-                .action("ADD")
-                .reviewId("review2")
-                .content("좋아요!")
-                .attachedPhotoIds(array)
-                .userId("noakafka")
-                .placeId("충정로")
-                .build();
+        EventDTO eventDTO = new EventDTO("REVIEW",
+                "ADD",
+                "review2",
+                "좋아요!",
+                array,
+                "noakafka",
+                "충정로");
 
         /** 1. Find User */
         User user = userRepository.findByUserId(eventDTO.getUserId())
@@ -61,19 +54,38 @@ class ReviewServiceTest {
                 .isFirstAtPlace(false)
                 .build();
 
-        Long changeAmount = 0L;
-        // 3. calculate Point 1
-        // 3-1. select by placeId
-        if(reviewRepositorySupport.findByPlaceId(eventDTO.getPlaceId()) == 0){
-            review.setIsFirstAtPlace(true);
-            changeAmount += 1L;
+        /** 장소가 존재하지 않으면 DB에 추가 */
+        Optional<Place> place = placeRepository.findByPlaceIdForUpdate(eventDTO.getPlaceId());
+        if (place.isPresent() == false) {
+            placeRepository.save(Place.builder()
+                    .placeId(eventDTO.getPlaceId())
+                    .reviewCnt(0L).build());
         }
         else{
-            // 3-2 select by placeId, userId
-            if(reviewRepositorySupport.containUserReview(eventDTO.getPlaceId(), eventDTO.getUserId())){
-               return;
-            }
+            placeRepository.save(place.get());
         }
+
+        // 3. calculate Point 1
+        Long changeAmount = 0L;
+        /** 이 장소에 내 댓글이 없는가? */
+        // 3-1 select by placeId, userId
+        if(reviewRepositorySupport.containUserReview(eventDTO.getPlaceId(), eventDTO.getUserId())){
+            return;
+        }
+        /** 이 장소에 댓글 갯수가 0개인가? */
+        // 3-2. select by placeId
+        Place dbPlace = placeRepository.findByPlaceIdForUpdate(eventDTO.getPlaceId())
+                .orElseThrow(IllegalArgumentException::new);
+
+
+        Long cntReview = dbPlace.getReviewCnt();
+        if(cntReview == 0L) {
+            user.setPoint(user.getPoint() + 1L);
+            review.setIsFirstAtPlace(true);
+        }
+        dbPlace.setReviewCnt(cntReview + 1L);
+        /** Lock 해제*/
+        placeRepository.save(dbPlace);
 
         // 4. calculate Point 2
         // 4-1. photo exist
@@ -125,15 +137,14 @@ class ReviewServiceTest {
         //given
         List<String> array = new ArrayList<>(Arrays.asList("11", "22", "33"));
 
-        EventDTO eventDTO = EventDTO.builder()
-                .type("REVIEW")
-                .action("ADD")
-                .reviewId("review2")
-                .content("좋아요!")
-                .attachedPhotoIds(array)
-                .userId("noakafka")
-                .placeId("충정로")
-                .build();
+        EventDTO eventDTO = new EventDTO("REVIEW",
+                "ADD",
+                "review2",
+                "좋아요!",
+                array,
+                "noakafka",
+                "충정로");
+
         Review review = Review.builder()
                 .reviewId(eventDTO.getReviewId())
                 .content(eventDTO.getContent())

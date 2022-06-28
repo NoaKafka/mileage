@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 @Entity
 @Data
@@ -18,7 +19,7 @@ public class User {
     @Column(name = "USER_ID")
     private String userId;
 
-    @Column
+    @Column(nullable = false)
     private Long point;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

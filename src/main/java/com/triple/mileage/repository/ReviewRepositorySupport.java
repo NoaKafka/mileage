@@ -27,37 +27,11 @@ public class ReviewRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    public Long findByPlaceId(String placeId){
-        return jpaQueryFactory.selectFrom(review)
-                .where(review.placeId.eq(placeId))
-                .fetch()
-                .stream().count();
-    };
-
     public boolean containUserReview(String placeId,  String userId) {
         return (jpaQueryFactory.selectFrom(review)
                 .where(review.placeId.eq(placeId))
                 .where(review.userId.eq(userId))
                 .fetch()
-                .stream().count() ) > 0L;
+                .size() ) > 0;
     }
-
-/*
-
-    public List<Post> findAllPostsInnerFetchJoin() {
-        return jpaQueryFactory.selectFrom(post)
-                .innerJoin(post.comments)
-                .fetchJoin()
-                .fetch();
-    }
-
-    public List<Orphan> findALlOrphans() {
-        return jpaQueryFactory.selectFrom(orphan)
-                .distinct()
-                .leftJoin(orphan.parent).fetchJoin()
-                .where(orphan.name.contains("abc"))
-                .fetch();
-    }
-
-     */
 }

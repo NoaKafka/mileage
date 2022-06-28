@@ -22,13 +22,13 @@ public class Review {
     @Column(nullable = false)
     private String userId;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LinkPhoto> linkPhotos;
 
-    @Column
-    private Boolean isFirstAtPlace;
+    @Column(nullable = false)
+    private Boolean isFirstAtPlace = false;
 
 }

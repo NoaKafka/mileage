@@ -3,6 +3,7 @@ package com.triple.mileage.service;
 import com.triple.mileage.domain.*;
 import com.triple.mileage.repository.*;
 import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.repository.query.ReviewDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,12 @@ public class  ReviewService {
     }
 
     @Transactional
-    public Review addReview(EventDTO eventDTO) {
+    public ReviewDTO addReview(EventDTO eventDTO) {
 
         // 1. Find User
+        Optional<User> optionalUser = userRepository.findByUserId(eventDTO.getUserId());
+        if(optionalUser.isPresent() == false) userRepository.save(User.builder().userId(eventDTO.getUserId()).pointLogs(new ArrayList<PointLog>()).point(0L).build());
+
         User dbUser = userRepository.findByUserId(eventDTO.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,6 +49,17 @@ public class  ReviewService {
                 .placeId(eventDTO.getPlaceId())
                 .isFirstAtPlace(false)
                 .build();
+
+        /** 장소가 존재하지 않으면 DB에 추가 */
+        Optional<Place> place = placeRepository.findByPlaceIdForUpdate(eventDTO.getPlaceId());
+        if (place.isPresent() == false) {
+            placeRepository.save(Place.builder()
+                    .placeId(eventDTO.getPlaceId())
+                    .reviewCnt(0L).build());
+        }
+        else{
+            placeRepository.save(place.get());
+        }
 
         // 3. calculate Point 1
         Long changeAmount = 0L;
@@ -102,8 +117,17 @@ public class  ReviewService {
 
         // 9. save User
         User savedUser = userRepository.save(dbUser);
-
-        return reviewRepository.save(review);
+        Review savedReivew = reviewRepository.save(review);
+        List<String> dtoPhotoList = new ArrayList<>();
+        for (LinkPhoto linkPhoto : savedReivew.getLinkPhotos()) {
+            dtoPhotoList.add(linkPhoto.getPhotoId());
+        }
+        return new ReviewDTO(savedReivew.getReviewId(),
+                savedReivew.getPlaceId(),
+                savedReivew.getUserId(),
+                savedReivew.getContent(),
+                dtoPhotoList,
+                savedReivew.getIsFirstAtPlace());
     }
 
     /** Review 수정
@@ -112,7 +136,7 @@ public class  ReviewService {
      * @return Review(Modified)
      */
     @Transactional
-    public Review modifyReview(EventDTO eventDTO) {
+    public ReviewDTO modifyReview(EventDTO eventDTO) {
 
         // event -> Review
         /** 1. find User*/
@@ -176,7 +200,16 @@ public class  ReviewService {
             /** 9. save User */
             User savedUser = userRepository.save(user);
         }
-        return savedReview;
+        List<String> dtoPhotoList = new ArrayList<>();
+        for (LinkPhoto linkPhoto : savedReview.getLinkPhotos()) {
+            dtoPhotoList.add(linkPhoto.getPhotoId());
+        }
+        return new ReviewDTO(savedReview.getReviewId(),
+                savedReview.getPlaceId(),
+                savedReview.getUserId(),
+                savedReview.getContent(),
+                dtoPhotoList,
+                savedReview.getIsFirstAtPlace());
     }
 
 

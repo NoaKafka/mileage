@@ -33,15 +33,13 @@ class QueryRepositoryTest {
         //given
         List<String> array = new ArrayList<>(Arrays.asList("e4d1a64e-a531-46de-88d0-ff0ed70c0bb8", "afb0cef2- 851d-4a50-bb07-9cc15cbdc332"));
 
-        EventDTO eventDTO = EventDTO.builder()
-                .type("REVIEW")
-                .action("ADD")
-                .reviewId("240a0658-dc5f-4878-9381-ebb7b2667772")
-                .content("좋아요!")
-                .attachedPhotoIds(array)
-                .userId("noakafka")
-                .placeId("충정로")
-                .build();
+        EventDTO eventDTO = new EventDTO("REVIEW",
+                "ADD",
+                "review2",
+                "좋아요!",
+                array,
+                "noakafka",
+                "충정로");
         //when
         //save Review
         Review dbReview = reviewRepository.save(Review.builder()
