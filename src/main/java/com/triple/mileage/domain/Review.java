@@ -29,6 +29,6 @@ public class Review {
     private List<LinkPhoto> linkPhotos;
 
     @Column(nullable = false)
-    private Boolean isFirstAtPlace = false;
+    private Boolean isFirstAtPlace;
 
 }
