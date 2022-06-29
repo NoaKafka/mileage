@@ -1,4 +1,4 @@
-package com.triple.mileage.repository.query;
+package com.triple.mileage.dto;
 
 import lombok.*;
 

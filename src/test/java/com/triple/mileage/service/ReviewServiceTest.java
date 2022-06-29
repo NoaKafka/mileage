@@ -2,7 +2,7 @@ package com.triple.mileage.service;
 
 import com.triple.mileage.domain.*;
 import com.triple.mileage.repository.*;
-import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.dto.EventDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

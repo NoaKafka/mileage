@@ -1,7 +1,7 @@
 package com.triple.mileage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.dto.EventDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

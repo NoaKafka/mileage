@@ -1,6 +1,5 @@
-package com.triple.mileage.repository.query;
+package com.triple.mileage.dto;
 
-import com.triple.mileage.domain.LinkPhoto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

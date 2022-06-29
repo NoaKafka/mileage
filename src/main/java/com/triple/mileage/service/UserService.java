@@ -1,8 +1,9 @@
 package com.triple.mileage.service;
 
+import com.triple.mileage.exception.NoDataException;
 import com.triple.mileage.repository.UserRepository;
 import com.triple.mileage.domain.User;
-import com.triple.mileage.repository.query.UserDTO;
+import com.triple.mileage.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,11 +17,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO findByUserId(UserDTO user){
-        Optional<User> dbUser =  userRepository.findByUserId(user.getUserId());
+    public UserDTO findByUserId(String userId){
+        Optional<User> dbUser =  userRepository.findByUserId(userId);
         if(dbUser.isPresent()){
             return new UserDTO(dbUser.get().getUserId(), dbUser.get().getPoint());
         }
-        return null;
+        else{
+            throw new NoDataException("No User have That Id");
+        }
     }
 }

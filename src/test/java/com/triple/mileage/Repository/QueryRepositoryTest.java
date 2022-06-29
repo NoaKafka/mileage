@@ -2,7 +2,7 @@ package com.triple.mileage.Repository;
 
 import com.triple.mileage.domain.LinkPhoto;
 import com.triple.mileage.domain.Review;
-import com.triple.mileage.repository.query.EventDTO;
+import com.triple.mileage.dto.EventDTO;
 import com.triple.mileage.repository.LinkPhotoRepository;
 import com.triple.mileage.repository.ReviewRepository;
 import com.triple.mileage.repository.ReviewRepositorySupport;

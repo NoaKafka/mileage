@@ -1,9 +1,11 @@
 package com.triple.mileage.service;
 
 import com.triple.mileage.domain.*;
+import com.triple.mileage.exception.AlreadyWrittenException;
+import com.triple.mileage.exception.NoDataException;
 import com.triple.mileage.repository.*;
-import com.triple.mileage.repository.query.EventDTO;
-import com.triple.mileage.repository.query.ReviewDTO;
+import com.triple.mileage.dto.EventDTO;
+import com.triple.mileage.dto.ReviewDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,13 +35,14 @@ public class  ReviewService {
 
     @Transactional
     public ReviewDTO addReview(EventDTO eventDTO) {
-
         // 1. Find User
         Optional<User> optionalUser = userRepository.findByUserId(eventDTO.getUserId());
-        if(optionalUser.isPresent() == false) userRepository.save(User.builder().userId(eventDTO.getUserId()).pointLogs(new ArrayList<PointLog>()).point(0L).build());
+        if(optionalUser.isPresent() == false) userRepository.save(User.builder()
+                .userId(eventDTO.getUserId())
+                .pointLogs(new ArrayList<PointLog>())
+                .point(0L).build());
 
-        User dbUser = userRepository.findByUserId(eventDTO.getUserId())
-                .orElseThrow(IllegalArgumentException::new);
+        User dbUser = getDbUser(eventDTO.getUserId());
 
         // 2. make review Object
         Review review = Review.builder()
@@ -65,14 +68,11 @@ public class  ReviewService {
         Long changeAmount = 0L;
         /** 이 장소에 내 댓글이 없는가? */
         // 3-1 select by placeId, userId
-        if(reviewRepositorySupport.containUserReview(eventDTO.getPlaceId(), eventDTO.getUserId())){
-            return null;
-        }
+        existUserReview(eventDTO.getPlaceId(), eventDTO.getUserId());
+
         /** 이 장소에 댓글 갯수가 0개인가? */
         // 3-2. select by placeId
-        Place dbPlace = placeRepository.findByPlaceIdForUpdate(eventDTO.getPlaceId())
-                .orElseThrow(IllegalArgumentException::new);
-
+        Place dbPlace = getDbPlace(eventDTO.getPlaceId());
 
         Long cntReview = dbPlace.getReviewCnt();
         if(cntReview == 0L) {
@@ -90,15 +90,7 @@ public class  ReviewService {
         if(eventDTO.getContent().length() != 0) changeAmount += 1L;
 
         // 5. save Review
-        List<LinkPhoto> linkPhotos = new ArrayList<>();
-        for (String photoId : eventDTO.getAttachedPhotoIds()) {
-            // save link
-            linkPhotos.add(LinkPhoto.builder()
-                    .photoId(photoId)
-                    .review(review)
-                    .build()
-            );
-        }
+        List<LinkPhoto> linkPhotos = makePhotoList(eventDTO.getAttachedPhotoIds(), review);
         review.setLinkPhotos(linkPhotos);
 
         // 6. make PointLog
@@ -116,12 +108,15 @@ public class  ReviewService {
         dbUser.setPoint(dbUser.getPoint() + changeAmount);
 
         // 9. save User
-        User savedUser = userRepository.save(dbUser);
+        userRepository.save(dbUser);
         Review savedReivew = reviewRepository.save(review);
+
+        /** make DTO */
         List<String> dtoPhotoList = new ArrayList<>();
         for (LinkPhoto linkPhoto : savedReivew.getLinkPhotos()) {
             dtoPhotoList.add(linkPhoto.getPhotoId());
         }
+
         return new ReviewDTO(savedReivew.getReviewId(),
                 savedReivew.getPlaceId(),
                 savedReivew.getUserId(),
@@ -140,22 +135,18 @@ public class  ReviewService {
 
         // event -> Review
         /** 1. find User*/
-        User user = userRepository.findByUserId(eventDTO.getUserId())
-                .orElseThrow(IllegalArgumentException::new);
+        User user = getDbUser(eventDTO.getUserId());
 
         /** 2. find Review */
-        Review dbReview = reviewRepository.findByReviewId(eventDTO.getReviewId())
-                .orElseThrow(IllegalArgumentException::new);
+        Review dbReview = getDbReview(eventDTO.getReviewId());
 
         /** 3. calculate point */
         Long changeAmount = 0L;
-        log.info(eventDTO.getContent());
         if(dbReview.getLinkPhotos().size() > 0L && eventDTO.getAttachedPhotoIds().size() == 0L){changeAmount -= 1L;}
         else if(dbReview.getLinkPhotos().size() == 0L && eventDTO.getAttachedPhotoIds().size() > 0L){changeAmount += 1L;}
 
-        log.info("db contents : {} | event contents : {}", dbReview.getContent(), eventDTO.getContent());
-        if(dbReview.getContent().length() != 0 && eventDTO.getContent().length() == 0){changeAmount -= 1L;}
-        else if(dbReview.getContent().length() == 0 && eventDTO.getContent().length() != 0){changeAmount += 1L;}
+        if(dbReview.getContent().length() > 0L && eventDTO.getContent().length() == 0L){changeAmount -= 1L;}
+        else if(dbReview.getContent().length() == 0L && eventDTO.getContent().length() >= 0L){changeAmount += 1L;}
 
         /** 4. save Review */
         List<String> photosToMod = new ArrayList<>(eventDTO.getAttachedPhotoIds());
@@ -182,7 +173,6 @@ public class  ReviewService {
         Review savedReview =  reviewRepository.save(dbReview);
 
         /** 5. check Point changed */
-        log.info("last changeAmount : {}", changeAmount);
         if(changeAmount != 0L){
             /** 6. make PointLog */
             PointLog newPointLog = PointLog.builder()
@@ -216,16 +206,13 @@ public class  ReviewService {
     @Transactional
     public void deleteReview(String reviewId, String userId){
 
-        /** 1. find User */
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(IllegalArgumentException::new);
+        /** 1. find User & Review*/
+        User user = getDbUser(userId);
         // when
-        Review dbReview = reviewRepository.findByReviewId(reviewId)
-                .orElseThrow(IllegalArgumentException::new);
+        Review dbReview = getDbReview(reviewId);
 
         /** 2. calculate place's reviewCnt */
-        Place dbPlace = placeRepository.findByPlaceIdForUpdate(dbReview.getPlaceId())
-                .orElseThrow(IllegalArgumentException::new);
+        Place dbPlace = getDbPlace(dbReview.getPlaceId());
 
         dbPlace.setReviewCnt(dbPlace.getReviewCnt() - 1L);
         placeRepository.save(dbPlace);
@@ -253,5 +240,53 @@ public class  ReviewService {
 
         /** 8. delete Review*/
         reviewRepository.delete(dbReview);
+    }
+
+    private Place getDbPlace(String placeId) {
+        Optional<Place> place =  placeRepository.findByPlaceIdForUpdate(placeId);
+        if(place.isPresent()){
+            return place.get();
+        }
+        else{
+            throw new NoDataException("No Place Have That Id");
+        }
+    }
+
+    private Review getDbReview(String reviewId) {
+        Optional<Review> review =  reviewRepository.findByReviewId(reviewId);
+        if(review.isPresent()){
+            return review.get();
+        }
+        else{
+            throw new NoDataException("No Review Have That Id");
+        }
+    }
+
+    private List<LinkPhoto> makePhotoList(List<String> attachedPhotoIds, Review review) {
+        List<LinkPhoto> photoList = new ArrayList<>();
+        for (String photoId : attachedPhotoIds) {
+            // save link
+            photoList.add(LinkPhoto.builder()
+                    .photoId(photoId)
+                    .review(review)
+                    .build()
+            );
+        }
+        return photoList;
+    }
+
+    private User getDbUser(String userId){
+        Optional<User> user = userRepository.findByUserId(userId);
+        if(user.isPresent()){
+            return user.get();
+        }else{
+            throw new NoDataException("No User Have That Name");
+        }
+    }
+
+    private void existUserReview(String placeId, String userId) {
+        if(reviewRepositorySupport.containUserReview(placeId, userId)){
+            throw new AlreadyWrittenException("User Already have written review at this place");
+        }
     }
 }

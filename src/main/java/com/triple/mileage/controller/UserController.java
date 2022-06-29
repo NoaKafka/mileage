@@ -1,10 +1,12 @@
 package com.triple.mileage.controller;
 
-import com.triple.mileage.domain.User;
-import com.triple.mileage.repository.query.UserDTO;
+import com.triple.mileage.dto.UserDTO;
 import com.triple.mileage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -17,8 +19,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public UserDTO getUserPoint(@RequestBody UserDTO user){
-        return userService.findByUserId(user);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserPoint(@PathVariable String userId){
+        UserDTO userDTO = userService.findByUserId(userId);
+        return ResponseEntity.ok(userDTO) ;
     }
 }
