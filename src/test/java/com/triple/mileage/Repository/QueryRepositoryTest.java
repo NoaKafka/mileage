@@ -6,10 +6,12 @@ import com.triple.mileage.dto.EventDTO;
 import com.triple.mileage.repository.LinkPhotoRepository;
 import com.triple.mileage.repository.ReviewRepository;
 import com.triple.mileage.repository.ReviewRepositorySupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ class QueryRepositoryTest {
 
     @Test
     @DisplayName("리뷰 목록 조회")
+    @Transactional
     void findByReviewId() {
         //given
         List<String> array = new ArrayList<>(Arrays.asList("e4d1a64e-a531-46de-88d0-ff0ed70c0bb8", "afb0cef2- 851d-4a50-bb07-9cc15cbdc332"));
@@ -47,6 +50,7 @@ class QueryRepositoryTest {
                 .content(eventDTO.getContent())
                 .userId(eventDTO.getUserId())
                 .placeId(eventDTO.getPlaceId())
+                .isFirstAtPlace(false)
                 .build()
         );
         for (String photoId : eventDTO.getAttachedPhotoIds()) {
@@ -58,8 +62,8 @@ class QueryRepositoryTest {
             );
         }
 
-        List<Review> dbReviews = reviewRepositorySupport.findByReviewId("240a0658-dc5f-4878-9381-ebb7b2667772");
+        List<Review> dbReviews = reviewRepositorySupport.findByReviewId("review2");
 
-        assertThat(dbReviews.get(0).getReviewId()).isEqualTo("240a0658-dc5f-4878-9381-ebb7b2667772");
+        assertThat(dbReviews.get(0).getReviewId()).isEqualTo("review2");
     }
 }

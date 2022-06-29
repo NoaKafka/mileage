@@ -150,6 +150,7 @@ class ReviewServiceTest {
                 .content(eventDTO.getContent())
                 .userId(eventDTO.getUserId())
                 .placeId(eventDTO.getPlaceId())
+                .isFirstAtPlace(false)
                 .build();
 
         //when
@@ -169,6 +170,7 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("수정 -> Transactional로 해야 영속성컨텍스트 유지")
+    @Transactional
     void modifyReviewWithPoint() {
         // given
         Review reqReview = Review.builder()
@@ -176,8 +178,11 @@ class ReviewServiceTest {
                 .content("hi")
                 .userId("noakafka")
                 .placeId("충정로")
-                .build();
 
+                .isFirstAtPlace(false)
+                .build();
+        reviewRepository.save(reqReview);
+        userRepository.save(User.builder().userId("noakafka").point(0L).pointLogs(new ArrayList<>()).build());
         /** 1. find User*/
         User user = userRepository.findByUserId(reqReview.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -188,9 +193,13 @@ class ReviewServiceTest {
 
         Long changeAmount = 0L;
         /** 3. calculate point */
-        if(dbReview.getLinkPhotos().size() != 0 && reqReview.getLinkPhotos().size() == 0){changeAmount -= 1L;}
-        else if(dbReview.getLinkPhotos().size() == 0 && reqReview.getLinkPhotos().size() != 0){changeAmount += 1L;}
-
+        if(dbReview.getLinkPhotos()!= null){
+            if (dbReview.getLinkPhotos().size() != 0 && reqReview.getLinkPhotos().size() == 0) {
+                changeAmount -= 1L;
+            } else if (dbReview.getLinkPhotos().size() == 0 && reqReview.getLinkPhotos().size() != 0) {
+                changeAmount += 1L;
+            }
+        }
         /** 4. save Review */
         List<String> photosToMod = new ArrayList<>();
         photosToMod.add("cascade1");photosToMod.add("cascade2");
@@ -248,8 +257,10 @@ class ReviewServiceTest {
                 .content("hi")
                 .userId("noakafka")
                 .placeId("충정로")
+                .isFirstAtPlace(false)
                 .build();
         // when
+        reviewRepository.save(reqReview);
         Review dbReview = reviewRepository.findByReviewId(reqReview.getReviewId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -281,6 +292,7 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("삭제 + 포인트")
+    @Transactional
     void deleteReviewWithPoint(){
 
         // given
@@ -291,7 +303,8 @@ class ReviewServiceTest {
                 .placeId("충정로")
                 .isFirstAtPlace(false)
                 .build();
-
+        reviewRepository.save(reqReview);
+        userRepository.save(User.builder().userId("noakafka").point(0L).pointLogs(new ArrayList<>()).build());
         /** 1. find User */
         User user = userRepository.findByUserId(reqReview.getUserId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -304,8 +317,9 @@ class ReviewServiceTest {
             Long changeAmount = 0L;
             if(selectedReview.getIsFirstAtPlace()) changeAmount -= 1L;
             if(selectedReview.getContent().length() > 0L) changeAmount -= 1L;
-            if(selectedReview.getLinkPhotos().size() > 0L) changeAmount -= 1L;
-
+            if(selectedReview.getLinkPhotos() != null) {
+                if (selectedReview.getLinkPhotos().size() > 0L) changeAmount -= 1L;
+            }
             /** 4. make PointLog */
             PointLog newPointLog = PointLog.builder()
                     .user(user)
@@ -340,6 +354,7 @@ class ReviewServiceTest {
                 .content("hi")
                 .userId("noakafka")
                 .placeId("충정로")
+                .isFirstAtPlace(false)
                 .build();
 
         // when

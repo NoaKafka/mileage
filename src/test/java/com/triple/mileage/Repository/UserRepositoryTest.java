@@ -24,7 +24,6 @@ class UserRepositoryTest {
                 .userId("sakarina")
                 .point(0L)
                 .build();
-
         // when
         User dbUser = userRepository.save(user);
 

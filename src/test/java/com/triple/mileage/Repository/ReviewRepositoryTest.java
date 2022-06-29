@@ -12,10 +12,6 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 class ReviewRepositoryTest {
 
-    @Test
-    void findByReviewId() {
-    }
-
     @Autowired
     private ReviewRepository reviewRepository;
 
@@ -28,6 +24,7 @@ class ReviewRepositoryTest {
                 .content("좋아요!")
                 .userId("noakafka")
                 .placeId("seoul")
+                .isFirstAtPlace(false)
                 .build();
         //when
         Review dbReview = reviewRepository.save(review);
