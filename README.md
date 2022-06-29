@@ -1,3 +1,12 @@
+# Settings
+아래 파일에서 mysql username과 password를 세팅한다. (mysql version 8.0.29 사용)
+/mileage/src/main/resources/application.properties
+```
+spring.datasource.username='your username'
+spring.datasource.password='your password'
+```
+
+----
 # Installation
 ```
 -> cd /'Project Directory'
@@ -7,28 +16,41 @@
 ```
 ----
 # Description
-## (Get - Json) "/point/{userId}" : 포인트 조회 
-- input : userId
-- output : UserDTO(userId, point)
+![image](https://user-images.githubusercontent.com/35343777/176458415-90dd640f-5979-4171-bc40-111d1e79d5b9.png)
 
-## (Get - Json) "/point/log/{userId}" : 포인트 변경 로그 조회 
-- input : userId
-- output : List<PointLogDTO>
+## ADD
+1. Review Entity 생성
+2. userId로 User Entity 조회
+3. place에 userId로 등록된 review 존재 여부 확인(Lock획득). 존재한다면, throw AlreadyWrittenException
+4. place에 review 갯수가 0개라면 user에게 부여할 포인트 1 증가
+5. place cntReview 1 증가 후 update(Lock 해제)
+6. photo, contents 여부에 따라 각각 포인트 1점씩 부여
+7. user UPDATE
+8. review INSERT
+9. 저장된 review를 DTO로 변환 후 return
 
-## (Post - Json) "/events" : ADD, MOD, DELETE
-- input : EventDTO(type, action, reviewId, content, attachedPhotoIds, userId, placeId)
+## MOD
+1. userId로 User Entity 조회. 존재하지 않으면 throw NoDataException
+2. reviewId로 Review Entity 조회. 존재하지 않으면 throw NoDataException
+3. photo, contents 변동 사항에 따른 점수 변경
+4. 기존의 List<LinkPhoto>를 변경된 List<LinkPhoto>로 대체
+5. review UPDATE
+6. 포인트 변동이 있을떄, user point 계산 -> 포인트 변경, user의 pointLog 추가 -> user UPDATE
+7. update된 review를 DTO로 변환 후 return
 
-- ADD, MOD
-output: ReviewDTO(reviewId, placeId, userId, content, linkPhotos, isFirstAtPlace)
-
-- DELETE
-output : http.ok
+## DELETE
+1. userId로 User Entity 조회. 존재하지 않으면 throw NoDataException
+2. reviewId로 Review Entity 조회. 존재하지 않으면 throw NoDataException
+3. placeId로 Place Entity 조회. cntReview 1 차감 후, UPDATE
+4. isFirstAtPlace, photo, contents 여부에 따라 각각 포인트 1점씩 차감
+5. 점수 변동이 있다면, user의 pointLog 추가, user point 계산 후 user UPDATE
+6. review 삭제
 
 ----
 # condition
-Review ADD의 경우, 어플리케이션 과제 확인을 수월하게 하기위해 User가 없을때는, User를 추가한 뒤 다음 로직을 정상 진행.
+- Review ADD의 경우, 어플리케이션 과제 확인을 수월하게 하기위해 User가 없을때는, User를 추가한 뒤 다음 로직을 정상 진행.
   
-Place 테이블은, 경합 상황을 고려하여 Lock을 이용해서 동시성을 제어하고, 테이블을 따로 분리.
+- Place 테이블은, 경합 상황을 고려하여 Lock을 이용해서 동시성을 제어하고, 테이블을 따로 분리.
 
 ----
 # ERD
