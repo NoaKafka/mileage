@@ -76,7 +76,7 @@ public class  ReviewService {
 
         Long cntReview = dbPlace.getReviewCnt();
         if(cntReview == 0L) {
-            dbUser.setPoint(dbUser.getPoint() + 1L);
+            changeAmount += 1L;
             review.setIsFirstAtPlace(true);
         }
         dbPlace.setReviewCnt(cntReview + 1L);
