@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.triple.mileage.Repository.QueryRepositoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-06-29T12:02:17" hostname="noaui-MacBookPro.local" time="0.12">
+  <properties/>
+  <testcase name="리뷰 목록 조회" classname="com.triple.mileage.Repository.QueryRepositoryTest" time="0.12"/>
+  <system-out><![CDATA[2022-06-29 21:02:17.052  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.triple.mileage.Repository.QueryRepositoryTest], using SpringBootContextLoader
+2022-06-29 21:02:17.053  INFO 2303 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [com.triple.mileage.Repository.QueryRepositoryTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2022-06-29 21:02:17.054  INFO 2303 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.triple.mileage.Repository.QueryRepositoryTest]: QueryRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2022-06-29 21:02:17.073  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.triple.mileage.MileageApplication for test class com.triple.mileage.Repository.QueryRepositoryTest
+2022-06-29 21:02:17.077  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+2022-06-29 21:02:17.078  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@3bf4b018, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@d8cece4, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@55d98bbb, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@2e9f5499, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@30f54522, org.springframework.test.context.support.DirtiesContextTestExecutionListener@5af47414, org.springframework.test.context.transaction.TransactionalTestExecutionListener@43e9a8a2, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@178617da, org.springframework.test.context.event.EventPublishingTestExecutionListener@d408c5d, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@74ed1d35, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@7acf07b2, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@5d50e7f6, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@54fbaa65, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@48e3017a, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@4a937d43]
+2022-06-29 21:02:17.092  INFO 2303 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@9e092b5 testClass = QueryRepositoryTest, testInstance = com.triple.mileage.Repository.QueryRepositoryTest@52737c1, testMethod = findByReviewId@QueryRepositoryTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@158cb50a testClass = QueryRepositoryTest, locations = '{}', classes = '{class com.triple.mileage.MileageApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@1fa1cab1, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@146dfe6, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@6af9fcb2, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@1046d517, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@61fe30, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@7a675056], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@1d126f07]; rollback [true]
+Hibernate: 
+    /* load com.triple.mileage.domain.Review */ select
+        review0_.review_id as review_i1_3_1_,
+        review0_.content as content2_3_1_,
+        review0_.is_first_at_place as is_first3_3_1_,
+        review0_.place_id as place_id4_3_1_,
+        review0_.user_id as user_id5_3_1_,
+        linkphotos1_.review_id as review_i3_0_3_,
+        linkphotos1_.link_id as link_id1_0_3_,
+        linkphotos1_.link_id as link_id1_0_0_,
+        linkphotos1_.photo_id as photo_id2_0_0_,
+        linkphotos1_.review_id as review_i3_0_0_ 
+    from
+        review review0_ 
+    left outer join
+        link_photo linkphotos1_ 
+            on review0_.review_id=linkphotos1_.review_id 
+    where
+        review0_.review_id=?
+Hibernate: 
+    /* insert com.triple.mileage.domain.Review
+        */ insert 
+        into
+            review
+            (content, is_first_at_place, place_id, user_id, review_id) 
+        values
+            (?, ?, ?, ?, ?)
+Hibernate: 
+    /* insert com.triple.mileage.domain.LinkPhoto
+        */ insert 
+        into
+            link_photo
+            (photo_id, review_id) 
+        values
+            (?, ?)
+Hibernate: 
+    /* insert com.triple.mileage.domain.LinkPhoto
+        */ insert 
+        into
+            link_photo
+            (photo_id, review_id) 
+        values
+            (?, ?)
+Hibernate: 
+    /* select
+        review 
+    from
+        Review review 
+    where
+        review.reviewId = ?1 */ select
+            review0_.review_id as review_i1_3_,
+            review0_.content as content2_3_,
+            review0_.is_first_at_place as is_first3_3_,
+            review0_.place_id as place_id4_3_,
+            review0_.user_id as user_id5_3_ 
+        from
+            review review0_ 
+        where
+            review0_.review_id=?
+2022-06-29 21:02:17.207  INFO 2303 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@9e092b5 testClass = QueryRepositoryTest, testInstance = com.triple.mileage.Repository.QueryRepositoryTest@52737c1, testMethod = findByReviewId@QueryRepositoryTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@158cb50a testClass = QueryRepositoryTest, locations = '{}', classes = '{class com.triple.mileage.MileageApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@1fa1cab1, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@146dfe6, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@6af9fcb2, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@1046d517, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@61fe30, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@7a675056], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.triple.mileage.user.service.UserServiceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-06-29T12:02:17" hostname="noaui-MacBookPro.local" time="0.011">
+  <properties/>
+  <testcase name="유저 추가" classname="com.triple.mileage.user.service.UserServiceTest" time="0.011"/>
+  <system-out><![CDATA[2022-06-29 21:02:17.563  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.triple.mileage.user.service.UserServiceTest], using SpringBootContextLoader
+2022-06-29 21:02:17.564  INFO 2303 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [com.triple.mileage.user.service.UserServiceTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2022-06-29 21:02:17.564  INFO 2303 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.triple.mileage.user.service.UserServiceTest]: UserServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2022-06-29 21:02:17.567  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.triple.mileage.MileageApplication for test class com.triple.mileage.user.service.UserServiceTest
+2022-06-29 21:02:17.570  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+2022-06-29 21:02:17.570  INFO 2303 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@d970881, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@153cf928, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@4884350b, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@53cba89f, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@66ad7167, org.springframework.test.context.support.DirtiesContextTestExecutionListener@14aa2123, org.springframework.test.context.transaction.TransactionalTestExecutionListener@7def62d0, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@736eb2a2, org.springframework.test.context.event.EventPublishingTestExecutionListener@7ec5d3e1, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@3b235623, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@3ddc5a75, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@3b2114ce, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@6bab8290, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@4a985388, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@15c8b75c]
+Hibernate: 
+    /* load com.triple.mileage.domain.User */ select
+        user0_.user_id as user_id1_4_1_,
+        user0_.point as point2_4_1_,
+        pointlogs1_.user_id as user_id5_2_3_,
+        pointlogs1_.log_id as log_id1_2_3_,
+        pointlogs1_.log_id as log_id1_2_0_,
+        pointlogs1_.action as action2_2_0_,
+        pointlogs1_.amount as amount3_2_0_,
+        pointlogs1_.review_id as review_i4_2_0_,
+        pointlogs1_.user_id as user_id5_2_0_ 
+    from
+        user user0_ 
+    left outer join
+        point_log pointlogs1_ 
+            on user0_.user_id=pointlogs1_.user_id 
+    where
+        user0_.user_id=?
+Hibernate: 
+    /* insert com.triple.mileage.domain.User
+        */ insert 
+        into
+            user
+            (point, user_id) 
+        values
+            (?, ?)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
