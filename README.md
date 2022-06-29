@@ -16,28 +16,12 @@ spring.datasource.password='your password'
 ```
 ----
 # Description
-## (Get - Json) "/point/{userId}" : 포인트 조회 
-- input : userId
-- output : UserDTO(userId, point)
-
-## (Get - Json) "/point/log/{userId}" : 포인트 변경 로그 조회 
-- input : userId
-- output : List<PointLogDTO>
-
-## (Post - Json) "/events" : ADD, MOD, DELETE
-- input : EventDTO(type, action, reviewId, content, attachedPhotoIds, userId, placeId)
-
-- ADD, MOD
-output: ReviewDTO(reviewId, placeId, userId, content, linkPhotos, isFirstAtPlace)
-
-- DELETE
-output : http.ok
-
+![image](https://user-images.githubusercontent.com/35343777/176458415-90dd640f-5979-4171-bc40-111d1e79d5b9.png)
 ----
 # condition
-Review ADD의 경우, 어플리케이션 과제 확인을 수월하게 하기위해 User가 없을때는, User를 추가한 뒤 다음 로직을 정상 진행.
+- Review ADD의 경우, 어플리케이션 과제 확인을 수월하게 하기위해 User가 없을때는, User를 추가한 뒤 다음 로직을 정상 진행.
   
-Place 테이블은, 경합 상황을 고려하여 Lock을 이용해서 동시성을 제어하고, 테이블을 따로 분리.
+- Place 테이블은, 경합 상황을 고려하여 Lock을 이용해서 동시성을 제어하고, 테이블을 따로 분리.
 
 ----
 # ERD
