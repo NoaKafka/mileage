@@ -1,5 +1,5 @@
 # Settings
-아래 파일에서 mysql username과 password를 세팅한다.
+아래 파일에서 mysql username과 password를 세팅한다. (mysql version 8.0.29 사용)
 /mileage/src/main/resources/application.properties
 ```
 spring.datasource.username='your username'
