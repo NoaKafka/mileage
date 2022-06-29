@@ -1,31 +1,34 @@
 # Installation
 ```
-cd /'Project Directory'/lib
+cd /'Project Directory'
+./gradlew build
+cd /lib
 java -jar 'filename'.jar
 ```
 ----
 # Description
-## (Post - Json) "/point" : 포인트 조회 
+## (Get - Json) "/point/{userId}" : 포인트 조회 
 - input : userId
 - output : UserDTO(userId, point)
 
-- service logic
-1. 클라이언트로부터 받은, userId로 User Table Select
-2. user가 존재하지 않는다면, new user Insert
-3. user로부터 point가 담긴 userDTO 생성 후, 반환
+## (Get - Json) "/point/log/{userId}" : 포인트 변경 로그 조회 
+- input : userId
+- output : List<PointLogDTO>
 
-## (Post - Json) "/events" : 리뷰 생성(ADD), 수정(MOD), 삭제(DELETE) 
+## (Post - Json) "/events" : ADD, MOD, DELETE
 - input : EventDTO(type, action, reviewId, content, attachedPhotoIds, userId, placeId)
-- output : ReviewDTO(reviewId, placeId, userId, content, linkPhotos, isFirstAtPlace)
 
-- service logic
-1.
-2.
-3.
-4.
-5.
-6.
-7.
+- ADD, MOD
+output: ReviewDTO(reviewId, placeId, userId, content, linkPhotos, isFirstAtPlace)
+
+- DELETE
+output : http.ok
+
+----
+# condition
+Review ADD의 경우, 어플리케이션 과제 확인을 수월하게 하기위해 User가 없을때는, User를 추가한 뒤 다음 로직을 정상 진행.
+Place 테이블은, 경합 상황을 고려하여 Lock을 이용해서 동시성을 제어하고, 테이블을 따로 분리.
+
 ----
 # ERD
 ![TRIPLE_DB](https://user-images.githubusercontent.com/35343777/176214241-bdcc5b40-b2a0-42e1-ad06-37af9a6ff794.png)
