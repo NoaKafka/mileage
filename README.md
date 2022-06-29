@@ -1,9 +1,9 @@
 # Installation
 ```
-cd /'Project Directory'
-./gradlew build
-cd /lib
-java -jar 'filename'.jar
+-> cd /'Project Directory'
+-> ./gradlew build
+-> cd /lib
+-> java -jar 'filename'.jar
 ```
 ----
 # Description
