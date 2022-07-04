@@ -223,17 +223,19 @@ public class  ReviewService {
         if(dbReview.getContent().length() > 0L) changeAmount -= 1L;
         if(dbReview.getLinkPhotos().size() > 0L) changeAmount -= 1L;
 
-        /** 4. make PointLog */
-        PointLog newPointLog = PointLog.builder()
-                .user(user)
-                .reviewId(dbReview.getReviewId())
-                .amount(changeAmount)
-                .action("DELETE")
-                .build();
+        if(changeAmount > 0L) {
+            /** 4. make PointLog */
+            PointLog newPointLog = PointLog.builder()
+                    .user(user)
+                    .reviewId(dbReview.getReviewId())
+                    .amount(changeAmount)
+                    .action("DELETE")
+                    .build();
 
-        /** 5.add Log to user's logList */
-        user.getPointLogs().add(newPointLog);
-        user.setPoint(user.getPoint() + changeAmount);
+            /** 5.add Log to user's logList */
+            user.getPointLogs().add(newPointLog);
+            user.setPoint(user.getPoint() + changeAmount);
+        }
 
         /** 7. save User */
         User savedUser = userRepository.save(user);

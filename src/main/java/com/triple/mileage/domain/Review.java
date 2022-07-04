@@ -22,7 +22,7 @@ public class Review {
     @Column(nullable = false)
     private String userId;
 
-    @Column(nullable = false)
+    @Column
     private String content;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
