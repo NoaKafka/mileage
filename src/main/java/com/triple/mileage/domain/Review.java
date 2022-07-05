@@ -6,9 +6,8 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(indexes = @Index(name = "reviewIdx", columnList = "placeId, userId"))
 public class Review {

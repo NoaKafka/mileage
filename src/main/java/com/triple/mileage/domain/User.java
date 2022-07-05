@@ -1,18 +1,14 @@
 package com.triple.mileage.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.*;
 import java.util.function.Supplier;
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class User {
     @Id

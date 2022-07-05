@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a9e8f61-a9f2-4528-974b-eff310b08bfd" name="Changes" comment="" />
+    <list default="true" id="7a9e8f61-a9f2-4528-974b-eff310b08bfd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/LinkPhoto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/LinkPhoto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/Place.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/Place.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/PointLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/PointLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/Review.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/triple/mileage/domain/User.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

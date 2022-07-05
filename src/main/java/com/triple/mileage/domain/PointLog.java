@@ -1,19 +1,15 @@
 package com.triple.mileage.domain;
 
 import com.triple.mileage.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(indexes = @Index(name = "pointLogIdx", columnList = "USER_ID"))
 public class PointLog {

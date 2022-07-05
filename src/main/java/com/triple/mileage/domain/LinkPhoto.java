@@ -8,9 +8,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class LinkPhoto {
 
